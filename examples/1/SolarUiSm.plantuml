@@ -68,22 +68,21 @@ BATTERY_STATS_2 -up-> BATTERY_STATS_1 : UP
 
 
 'EVENT HANDLERS
-MAIN_MENU: enter / Display_menu_header_push("MAIN MENU");
-MAIN_MENU: exit / Display_menu_header_pop();
+MAIN_MENU: enter / menu_header("MAIN MENU");
 CURRENT_TIME: enter / show_CURRENT_TIME();
-SOLAR_STATS: enter / Display_menu_header_push("SOLAR STATS");
-SOLAR_STATS: exit / Display_menu_header_pop();
-MAIN_MENU__SOLAR_STATS: enter / show_MAIN_MENU__SOLAR_STATS();
+SOLAR_STATS: enter / menu_header("SOLAR STATS");
+SOLAR_STATS: exit / menu_header("MAIN MENU");
+MAIN_MENU__SOLAR_STATS: enter / option("SOLAR STATS");
 SOLAR_STATS_1: enter / show_SOLAR_STATS_1();
-SOLAR_STATS_2: enter / Display_menu_header_push("SOLAR STATS 2");
-SOLAR_STATS_2: exit / Display_menu_header_pop();
-SOLAR_STATS__SOLAR_STATS_2: enter / show_SOLAR_STATS__SOLAR_STATS_2();
+SOLAR_STATS_2: enter / menu_header("SOLAR STATS 2");
+SOLAR_STATS_2: exit / menu_header("SOLAR STATS");
+SOLAR_STATS__SOLAR_STATS_2: enter / option("SOLAR STATS 2");
 SS2_VOLTAGE: enter / show_SS2_VOLTAGE();
 SS2_CURRENT: enter / show_SS2_CURRENT();
 SOLAR_STATS_3: enter / show_SOLAR_STATS_3();
-BATTERY_STATS: enter / Display_menu_header_push("BATTERY STATS");
-BATTERY_STATS: exit / Display_menu_header_pop();
-MAIN_MENU__BATTERY_STATS: enter / show_MAIN_MENU__BATTERY_STATS();
+BATTERY_STATS: enter / menu_header("BATTERY STATS");
+BATTERY_STATS: exit / menu_header("MAIN MENU");
+MAIN_MENU__BATTERY_STATS: enter / option("BATTERY STATS");
 BATTERY_STATS_1: enter / show_BATTERY_STATS_1();
 BATTERY_STATS_2: enter / show_BATTERY_STATS_2();
 BATTERY_STATS_3: enter / show_BATTERY_STATS_3();

@@ -166,6 +166,13 @@ class PlantUmlGen {
     }
 
     /**
+     * @param {MenuItem} item 
+     */
+    #makeTextName(item) {
+        return item.title.replace(/_/g, " ");
+    }
+
+    /**
      * @param {MenuItem} state
      */
     genState(state, indent = "") {
@@ -287,16 +294,24 @@ class PlantUmlGen {
 
         // do up here so that root menu is also handled
         if (state.hasChildren()) {
+            // if you want to call enter/exit functions:
             // str += `${state.title}: enter / enter_${state.title}();\n`;
             // str += `${state.title}: exit / exit_${state.title}();\n`;
 
-            str += `${state.title}: enter / Display_menu_header_push("${state.title.replace(/_/g, " ")}");\n`;
-            str += `${state.title}: exit / Display_menu_header_pop();\n`;
+            // if you want to push/pop menu headers:
+            // str += `${state.title}: enter / menu_header_push("${this.#makeTextName(state)}");\n`;
+            // str += `${state.title}: exit / menu_header_pop();\n`;
+
+            // set header back to parent when exiting
+            str += `${state.title}: enter / menu_header("${this.#makeTextName(state)}");\n`;
+            if (state.parent !== null) {
+                str += `${state.title}: exit / menu_header("${this.#makeTextName(state.parent)}");\n`;
+            }
         }
 
         if (state.parent !== null) {
             if (state.hasChildren()) {
-                str += `${this.#makeOptionName(state)}: enter / show_${this.#makeOptionName(state)}();\n`;
+                str += `${this.#makeOptionName(state)}: enter / option("${this.#makeTextName(state)}");\n`;
             } else {
                 str += `${state.title}: enter / show_${state.title}();\n`;
             }
