@@ -23,16 +23,24 @@
     <textarea id="inputText" placeholder="Enter your text here...">
 MAIN_MENU
     CURRENT_TIME
-    SOLAR_STATS
-        SOLAR_STATS_1
-        SOLAR_STATS_2
-            SS2_VOLTAGE
-            SS2_CURRENT
-        SOLAR_STATS_3
-    BATTERY_STATS
-        BATTERY_STATS_1
-        BATTERY_STATS_2
-        BATTERY_STATS_3
+    SOLAR
+        S_VOLTS
+        S_CURRENT
+        S_POWER
+    BATTERY
+        BAT_VOLTS
+        BAT_CURRENT
+        BAT_POWER
+        BAT_ESTIMATE
+            BTE_TIME_TO_EMPTY
+            BTE_TIME_TO_FULL
+            BTE_SETTINGS
+                BTE_USABLE_PERCENT
+                    BTE_USABLE_PERCENT_EDIT
+                BTE_WATT_HOURS
+                    BTE_WATT_HOURS_EDIT
+                BTE_CHARGE_EFFICIENCY
+                    BTE_CHARGE_EFFICIENCY_EDIT
     </textarea>
     <button onclick="displayText()">Submit</button>
     <button onclick="copyText()">COPY</button>

@@ -15,91 +15,161 @@ state HOME
 state MAIN_MENU {
     [*] -> CURRENT_TIME
     state CURRENT_TIME
-    state MAIN_MENU__SOLAR_STATS
-    state MAIN_MENU__BATTERY_STATS
+    state MAIN_MENU__SOLAR
+    state MAIN_MENU__BATTERY
 
-    state SOLAR_STATS {
-        [*] -> SOLAR_STATS_1
-        state SOLAR_STATS_1
-        state SOLAR_STATS__SOLAR_STATS_2
-        state SOLAR_STATS_3
-
-        state SOLAR_STATS_2 {
-            [*] -> SS2_VOLTAGE
-            state SS2_VOLTAGE
-            state SS2_CURRENT
-        }
+    state SOLAR {
+        [*] -> S_VOLTS
+        state S_VOLTS
+        state S_CURRENT
+        state S_POWER
     }
-    state BATTERY_STATS {
-        [*] -> BATTERY_STATS_1
-        state BATTERY_STATS_1
-        state BATTERY_STATS_2
-        state BATTERY_STATS_3
+    state BATTERY {
+        [*] -> BAT_VOLTS
+        state BAT_VOLTS
+        state BAT_CURRENT
+        state BAT_POWER
+        state BATTERY__BAT_ESTIMATE
+
+        state BAT_ESTIMATE {
+            [*] -> BTE_TIME_TO_EMPTY
+            state BTE_TIME_TO_EMPTY
+            state BTE_TIME_TO_FULL
+            state BAT_ESTIMATE__BTE_SETTINGS
+
+            state BTE_SETTINGS {
+                [*] -> BTE_SETTINGS__BTE_USABLE_PERCENT
+                state BTE_SETTINGS__BTE_USABLE_PERCENT
+                state BTE_SETTINGS__BTE_WATT_HOURS
+                state BTE_SETTINGS__BTE_CHARGE_EFFICIENCY
+
+                state BTE_USABLE_PERCENT {
+                    [*] -> BTE_USABLE_PERCENT_EDIT
+                    state BTE_USABLE_PERCENT_EDIT
+                }
+                state BTE_WATT_HOURS {
+                    [*] -> BTE_WATT_HOURS_EDIT
+                    state BTE_WATT_HOURS_EDIT
+                }
+                state BTE_CHARGE_EFFICIENCY {
+                    [*] -> BTE_CHARGE_EFFICIENCY_EDIT
+                    state BTE_CHARGE_EFFICIENCY_EDIT
+                }
+            }
+        }
     }
 }
 
 ' MAIN_MENU
-CURRENT_TIME -down-> MAIN_MENU__SOLAR_STATS : DOWN
-MAIN_MENU__SOLAR_STATS -down-> MAIN_MENU__BATTERY_STATS : DOWN
-MAIN_MENU__BATTERY_STATS -up-> MAIN_MENU__SOLAR_STATS : UP
-MAIN_MENU__SOLAR_STATS -up-> CURRENT_TIME : UP
+CURRENT_TIME -down-> MAIN_MENU__SOLAR : DOWN
+MAIN_MENU__SOLAR -down-> MAIN_MENU__BATTERY : DOWN
+MAIN_MENU__BATTERY -up-> MAIN_MENU__SOLAR : UP
+MAIN_MENU__SOLAR -up-> CURRENT_TIME : UP
 
-' SOLAR_STATS
-MAIN_MENU__SOLAR_STATS -right-> SOLAR_STATS : RIGHT
-SOLAR_STATS -left-> MAIN_MENU__SOLAR_STATS : LEFT
-SOLAR_STATS_1 -down-> SOLAR_STATS__SOLAR_STATS_2 : DOWN
-SOLAR_STATS__SOLAR_STATS_2 -down-> SOLAR_STATS_3 : DOWN
-SOLAR_STATS_3 -up-> SOLAR_STATS__SOLAR_STATS_2 : UP
-SOLAR_STATS__SOLAR_STATS_2 -up-> SOLAR_STATS_1 : UP
+' SOLAR
+MAIN_MENU__SOLAR -right-> SOLAR : RIGHT
+SOLAR -left-> MAIN_MENU__SOLAR : LEFT
+S_VOLTS -down-> S_CURRENT : DOWN
+S_CURRENT -down-> S_POWER : DOWN
+S_POWER -up-> S_CURRENT : UP
+S_CURRENT -up-> S_VOLTS : UP
 
-' SOLAR_STATS_2
-SOLAR_STATS__SOLAR_STATS_2 -right-> SOLAR_STATS_2 : RIGHT
-SOLAR_STATS_2 -left-> SOLAR_STATS__SOLAR_STATS_2 : LEFT
-SS2_VOLTAGE -down-> SS2_CURRENT : DOWN
-SS2_CURRENT -up-> SS2_VOLTAGE : UP
+' BATTERY
+MAIN_MENU__BATTERY -right-> BATTERY : RIGHT
+BATTERY -left-> MAIN_MENU__BATTERY : LEFT
+BAT_VOLTS -down-> BAT_CURRENT : DOWN
+BAT_CURRENT -down-> BAT_POWER : DOWN
+BAT_POWER -down-> BATTERY__BAT_ESTIMATE : DOWN
+BATTERY__BAT_ESTIMATE -up-> BAT_POWER : UP
+BAT_POWER -up-> BAT_CURRENT : UP
+BAT_CURRENT -up-> BAT_VOLTS : UP
 
-' BATTERY_STATS
-MAIN_MENU__BATTERY_STATS -right-> BATTERY_STATS : RIGHT
-BATTERY_STATS -left-> MAIN_MENU__BATTERY_STATS : LEFT
-BATTERY_STATS_1 -down-> BATTERY_STATS_2 : DOWN
-BATTERY_STATS_2 -down-> BATTERY_STATS_3 : DOWN
-BATTERY_STATS_3 -up-> BATTERY_STATS_2 : UP
-BATTERY_STATS_2 -up-> BATTERY_STATS_1 : UP
+' BAT_ESTIMATE
+BATTERY__BAT_ESTIMATE -right-> BAT_ESTIMATE : RIGHT
+BAT_ESTIMATE -left-> BATTERY__BAT_ESTIMATE : LEFT
+BTE_TIME_TO_EMPTY -down-> BTE_TIME_TO_FULL : DOWN
+BTE_TIME_TO_FULL -down-> BAT_ESTIMATE__BTE_SETTINGS : DOWN
+BAT_ESTIMATE__BTE_SETTINGS -up-> BTE_TIME_TO_FULL : UP
+BTE_TIME_TO_FULL -up-> BTE_TIME_TO_EMPTY : UP
+
+' BTE_SETTINGS
+BAT_ESTIMATE__BTE_SETTINGS -right-> BTE_SETTINGS : RIGHT
+BTE_SETTINGS -left-> BAT_ESTIMATE__BTE_SETTINGS : LEFT
+BTE_SETTINGS__BTE_USABLE_PERCENT -down-> BTE_SETTINGS__BTE_WATT_HOURS : DOWN
+BTE_SETTINGS__BTE_WATT_HOURS -down-> BTE_SETTINGS__BTE_CHARGE_EFFICIENCY : DOWN
+BTE_SETTINGS__BTE_CHARGE_EFFICIENCY -up-> BTE_SETTINGS__BTE_WATT_HOURS : UP
+BTE_SETTINGS__BTE_WATT_HOURS -up-> BTE_SETTINGS__BTE_USABLE_PERCENT : UP
+
+' BTE_USABLE_PERCENT
+BTE_SETTINGS__BTE_USABLE_PERCENT -right-> BTE_USABLE_PERCENT : RIGHT
+BTE_USABLE_PERCENT -left-> BTE_SETTINGS__BTE_USABLE_PERCENT : LEFT
+
+' BTE_WATT_HOURS
+BTE_SETTINGS__BTE_WATT_HOURS -right-> BTE_WATT_HOURS : RIGHT
+BTE_WATT_HOURS -left-> BTE_SETTINGS__BTE_WATT_HOURS : LEFT
+
+' BTE_CHARGE_EFFICIENCY
+BTE_SETTINGS__BTE_CHARGE_EFFICIENCY -right-> BTE_CHARGE_EFFICIENCY : RIGHT
+BTE_CHARGE_EFFICIENCY -left-> BTE_SETTINGS__BTE_CHARGE_EFFICIENCY : LEFT
 
 
 'EVENT HANDLERS
 MAIN_MENU: enter / menu_header("MAIN MENU");
 CURRENT_TIME: enter / show_CURRENT_TIME();
-SOLAR_STATS: enter / menu_header("SOLAR STATS");
-SOLAR_STATS: exit / menu_header("MAIN MENU");
-MAIN_MENU__SOLAR_STATS: enter / option("SOLAR STATS");
-SOLAR_STATS_1: enter / show_SOLAR_STATS_1();
-SOLAR_STATS_2: enter / menu_header("SOLAR STATS 2");
-SOLAR_STATS_2: exit / menu_header("SOLAR STATS");
-SOLAR_STATS__SOLAR_STATS_2: enter / option("SOLAR STATS 2");
-SS2_VOLTAGE: enter / show_SS2_VOLTAGE();
-SS2_CURRENT: enter / show_SS2_CURRENT();
-SOLAR_STATS_3: enter / show_SOLAR_STATS_3();
-BATTERY_STATS: enter / menu_header("BATTERY STATS");
-BATTERY_STATS: exit / menu_header("MAIN MENU");
-MAIN_MENU__BATTERY_STATS: enter / option("BATTERY STATS");
-BATTERY_STATS_1: enter / show_BATTERY_STATS_1();
-BATTERY_STATS_2: enter / show_BATTERY_STATS_2();
-BATTERY_STATS_3: enter / show_BATTERY_STATS_3();
+SOLAR: enter / menu_header("SOLAR");
+SOLAR: exit / menu_header("MAIN MENU");
+MAIN_MENU__SOLAR: enter / option("SOLAR");
+S_VOLTS: enter / show_S_VOLTS();
+S_CURRENT: enter / show_S_CURRENT();
+S_POWER: enter / show_S_POWER();
+BATTERY: enter / menu_header("BATTERY");
+BATTERY: exit / menu_header("MAIN MENU");
+MAIN_MENU__BATTERY: enter / option("BATTERY");
+BAT_VOLTS: enter / show_BAT_VOLTS();
+BAT_CURRENT: enter / show_BAT_CURRENT();
+BAT_POWER: enter / show_BAT_POWER();
+BAT_ESTIMATE: enter / menu_header("BAT ESTIMATE");
+BAT_ESTIMATE: exit / menu_header("BATTERY");
+BATTERY__BAT_ESTIMATE: enter / option("BAT ESTIMATE");
+BTE_TIME_TO_EMPTY: enter / show_BTE_TIME_TO_EMPTY();
+BTE_TIME_TO_FULL: enter / show_BTE_TIME_TO_FULL();
+BTE_SETTINGS: enter / menu_header("BTE SETTINGS");
+BTE_SETTINGS: exit / menu_header("BAT ESTIMATE");
+BAT_ESTIMATE__BTE_SETTINGS: enter / option("BTE SETTINGS");
+BTE_USABLE_PERCENT: enter / menu_header("BTE USABLE PERCENT");
+BTE_USABLE_PERCENT: exit / menu_header("BTE SETTINGS");
+BTE_SETTINGS__BTE_USABLE_PERCENT: enter / option("BTE USABLE PERCENT");
+BTE_USABLE_PERCENT_EDIT: enter / show_BTE_USABLE_PERCENT_EDIT();
+BTE_WATT_HOURS: enter / menu_header("BTE WATT HOURS");
+BTE_WATT_HOURS: exit / menu_header("BTE SETTINGS");
+BTE_SETTINGS__BTE_WATT_HOURS: enter / option("BTE WATT HOURS");
+BTE_WATT_HOURS_EDIT: enter / show_BTE_WATT_HOURS_EDIT();
+BTE_CHARGE_EFFICIENCY: enter / menu_header("BTE CHARGE EFFICIENCY");
+BTE_CHARGE_EFFICIENCY: exit / menu_header("BTE SETTINGS");
+BTE_SETTINGS__BTE_CHARGE_EFFICIENCY: enter / option("BTE CHARGE EFFICIENCY");
+BTE_CHARGE_EFFICIENCY_EDIT: enter / show_BTE_CHARGE_EFFICIENCY_EDIT();
 
 
 'MENU POSITION HANDLERS
 CURRENT_TIME: enter / menu_at_top();
-MAIN_MENU__SOLAR_STATS: enter / menu_in_middle();
-MAIN_MENU__BATTERY_STATS: enter / menu_at_bottom();
-SOLAR_STATS_1: enter / menu_at_top();
-SOLAR_STATS__SOLAR_STATS_2: enter / menu_in_middle();
-SOLAR_STATS_3: enter / menu_at_bottom();
-SS2_VOLTAGE: enter / menu_at_top();
-SS2_CURRENT: enter / menu_at_bottom();
-BATTERY_STATS_1: enter / menu_at_top();
-BATTERY_STATS_2: enter / menu_in_middle();
-BATTERY_STATS_3: enter / menu_at_bottom();
+MAIN_MENU__SOLAR: enter / menu_in_middle();
+MAIN_MENU__BATTERY: enter / menu_at_bottom();
+S_VOLTS: enter / menu_at_top();
+S_CURRENT: enter / menu_in_middle();
+S_POWER: enter / menu_at_bottom();
+BAT_VOLTS: enter / menu_at_top();
+BAT_CURRENT: enter / menu_in_middle();
+BAT_POWER: enter / menu_in_middle();
+BATTERY__BAT_ESTIMATE: enter / menu_at_bottom();
+BTE_TIME_TO_EMPTY: enter / menu_at_top();
+BTE_TIME_TO_FULL: enter / menu_in_middle();
+BAT_ESTIMATE__BTE_SETTINGS: enter / menu_at_bottom();
+BTE_SETTINGS__BTE_USABLE_PERCENT: enter / menu_at_top();
+BTE_SETTINGS__BTE_WATT_HOURS: enter / menu_in_middle();
+BTE_SETTINGS__BTE_CHARGE_EFFICIENCY: enter / menu_at_bottom();
+BTE_USABLE_PERCENT_EDIT: enter / menu_at_top();
+BTE_WATT_HOURS_EDIT: enter / menu_at_top();
+BTE_CHARGE_EFFICIENCY_EDIT: enter / menu_at_top();
 
 
 
